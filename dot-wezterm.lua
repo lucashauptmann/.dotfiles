@@ -15,8 +15,11 @@ end)
 config.font_size = 20
 
 config.color_scheme = "Adventure Time"
+
 config.use_fancy_tab_bar = false
 config.tab_bar_at_bottom = true
+
+config.window_decorations = "RESIZE"
 
 -- and finally, return the configuration to wezterm
 return config
