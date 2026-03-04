@@ -41,3 +41,23 @@ When executing a multi-phase plan, if each phase correspond to a new pull reques
 - Validate all user inputs
 - Parameterized queries only
 - CSRF protection enabled
+
+### 3. Documentation
+
+- When needed, you should write documentation for both humans and agents
+- Guidelines:
+  1. Start with what the reader needs
+     - It can be narrow or broad
+     - Include only what is relevant
+       - Does the reader needs to know about that?
+  2. Write less
+     - Don't need to cover everything
+     - Only what you can commit to, so we avoid out-of-date docs
+     - Bad: "GetRowEnumerator(); - Gets the rows enumerator"
+  3. Write or think the outline first
+  4. Rubber ducking works for docs too
+     - Talk to me
+  5. Readability
+     - Make it looks less like a wall of text
+     - Use headings
+     - Use code formattings

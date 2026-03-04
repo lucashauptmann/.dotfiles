@@ -23,15 +23,15 @@ end
 
 local env = load_env(os.getenv("HOME") .. "/.wezterm.env")
 
-local extra_tabs = {
-	{ name = "Scratch", color = "#06d6a0" },
-	{ name = "Claude", color = "#ef476f" },
+local tab_colors = {
+	MasterClass = "#444444",
+	Scratch = "#048a81",
+	["Claude 1"] = "#ef3e36",
+	["Claude 2"] = "#a11692",
+	["Claude 3"] = "#246eb9",
 }
 
-local tab_colors = {}
-for _, t in ipairs(extra_tabs) do
-	tab_colors[t.name] = t.color
-end
+local extra_tabs = { "Scratch", "Claude 1", "Claude 2", "Claude 3" }
 
 local function darken(hex, factor)
 	local r = tonumber(hex:sub(2, 3), 16)
@@ -54,7 +54,7 @@ wezterm.on("format-tab-title", function(tab)
 		return {
 			{ Background = { Color = bg } },
 			{ Foreground = { Color = "#ffffff" } },
-			{ Text = " " .. (tab.tab_index + 1) .. ": " .. title .. " " },
+			{ Text = " " .. (tab.tab_index + 1) .. ": " .. (tab.is_active and "*" or "") .. title .. " " },
 		}
 	end
 end)
@@ -69,9 +69,9 @@ wezterm.on("gui-startup", function(cmd)
 	pane:split({ direction = "Right", cwd = env.WEZTERM_PANE_TOP_RIGHT })
 	bottom_pane:split({ direction = "Right", cwd = env.WEZTERM_PANE_BOTTOM_RIGHT })
 
-	for _, t in ipairs(extra_tabs) do
+	for _, name in ipairs(extra_tabs) do
 		local new_tab = window:spawn_tab({ cwd = env.WEZTERM_PANE_TOP_RIGHT })
-		new_tab:set_title(t.name)
+		new_tab:set_title(name)
 	end
 
 	tab:activate()
