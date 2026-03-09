@@ -2,6 +2,7 @@
 input=$(cat)
 
 cwd=$(echo "$input" | jq -r '.workspace.current_dir // .cwd')
+transcript=$(echo "$input" | jq -r '.transcript_path // empty')
 dir=$(echo "$cwd" | sed "s|$HOME|~|")
 model=$(echo "$input" | jq -r '.model.display_name')
 remaining=$(echo "$input" | jq -r '.context_window.remaining_percentage // empty')
@@ -57,4 +58,16 @@ if [ -n "$remaining" ]; then
     ctx_color=$ctx_green
   fi
   printf '%s' "🧠 ${ctx_color}Context: ${used}% [${bar}]${reset}"
+fi
+
+# Line 3: first non-empty assistant text from transcript
+if [ -n "$transcript" ] && [ -f "$transcript" ]; then
+  grep -m20 '"type":"assistant"' "$transcript" 2>/dev/null | while IFS= read -r line; do
+    text=$(printf '%s' "$line" | jq -r '.message.content | if type == "array" then map(select(.type == "text") | .text) | join("") else . end' 2>/dev/null | sed 's/^[[:space:]]*//' | grep -m1 '[a-zA-Z]' | cut -c1-100)
+    if [ -n "$text" ]; then
+      dim=$(printf '\033[2m')
+      printf '\n%s' "${dim}${text}${reset}"
+      break
+    fi
+  done
 fi
