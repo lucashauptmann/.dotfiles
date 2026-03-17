@@ -8,8 +8,8 @@ model=$(echo "$input" | jq -r '.model.display_name')
 remaining=$(echo "$input" | jq -r '.context_window.remaining_percentage // empty')
 
 # git branch + dirty state
-git_branch=$(git -C "$cwd" symbolic-ref --short HEAD 2>/dev/null || git -C "$cwd" rev-parse --short HEAD 2>/dev/null)
-git_dirty=$(git -C "$cwd" status --porcelain 2>/dev/null | head -1)
+git_branch=$(git --no-optional-locks -C "$cwd" symbolic-ref --short HEAD 2>/dev/null || git --no-optional-locks -C "$cwd" rev-parse --short HEAD 2>/dev/null)
+git_dirty=$(git --no-optional-locks -C "$cwd" status --porcelain 2>/dev/null | head -1)
 
 # ANSI colors via printf interpretation
 blue=$(printf '\033[38;5;75m')
@@ -60,14 +60,3 @@ if [ -n "$remaining" ]; then
   printf '%s' "🧠 ${ctx_color}Context: ${used}% [${bar}]${reset}"
 fi
 
-# Line 3: first non-empty assistant text from transcript
-if [ -n "$transcript" ] && [ -f "$transcript" ]; then
-  grep -m20 '"type":"assistant"' "$transcript" 2>/dev/null | while IFS= read -r line; do
-    text=$(printf '%s' "$line" | jq -r '.message.content | if type == "array" then map(select(.type == "text") | .text) | join("") else . end' 2>/dev/null | sed 's/^[[:space:]]*//' | grep -m1 '[a-zA-Z]' | cut -c1-100)
-    if [ -n "$text" ]; then
-      dim=$(printf '\033[2m')
-      printf '\n%s' "${dim}${text}${reset}"
-      break
-    fi
-  done
-fi

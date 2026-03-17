@@ -24,14 +24,21 @@ end
 local env = load_env(os.getenv("HOME") .. "/.wezterm.env")
 
 local tab_colors = {
-	MasterClass = "#444444",
-	Scratch = "#048a81",
+	Backend = "#444444",
+	Web = "#048a81",
+	["Persona/Cortex"] = "#8b5cf6",
 	["Claude 1"] = "#ef3e36",
 	["Claude 2"] = "#a11692",
 	["Claude 3"] = "#246eb9",
 }
 
-local extra_tabs = { "Scratch", "Claude 1", "Claude 2", "Claude 3" }
+local split_tabs = {
+	{ name = "Backend", prefix = "BACKEND" },
+	{ name = "Web", prefix = "WEB" },
+	{ name = "Persona/Cortex", prefix = "PERSONA" },
+}
+
+local claude_tabs = { "Claude 1", "Claude 2", "Claude 3" }
 
 local function darken(hex, factor)
 	local r = tonumber(hex:sub(2, 3), 16)
@@ -59,22 +66,35 @@ wezterm.on("format-tab-title", function(tab)
 	end
 end)
 
--- Maximize on startup and split into 2x2 grid
+-- Maximize on startup and create split tabs
 wezterm.on("gui-startup", function(cmd)
-	local tab, pane, window = mux.spawn_window(cmd or { cwd = env.WEZTERM_PANE_TOP_LEFT })
-	tab:set_title(env.WEZTERM_TAB_NAME)
+	local first_prefix = split_tabs[1].prefix
+	local first_tab, pane, window = mux.spawn_window(cmd or {
+		cwd = env["WEZTERM_" .. first_prefix .. "_TOP_LEFT"],
+	})
+	first_tab:set_title(split_tabs[1].name)
 	window:gui_window():maximize()
 
-	local bottom_pane = pane:split({ direction = "Bottom", cwd = env.WEZTERM_PANE_BOTTOM_LEFT })
-	pane:split({ direction = "Right", cwd = env.WEZTERM_PANE_TOP_RIGHT })
-	bottom_pane:split({ direction = "Right", cwd = env.WEZTERM_PANE_BOTTOM_RIGHT })
+	-- Split first tab: horizontal split, then vertical split on top
+	local bottom = pane:split({ direction = "Bottom", cwd = env["WEZTERM_" .. first_prefix .. "_BOTTOM"] })
+	pane:split({ direction = "Right", cwd = env["WEZTERM_" .. first_prefix .. "_TOP_RIGHT"] })
 
-	for _, name in ipairs(extra_tabs) do
-		local new_tab = window:spawn_tab({ cwd = env.WEZTERM_PANE_TOP_RIGHT })
+	-- Create remaining split tabs (Web, Persona/Cortex)
+	for i = 2, #split_tabs do
+		local prefix = split_tabs[i].prefix
+		local new_tab, new_pane = window:spawn_tab({ cwd = env["WEZTERM_" .. prefix .. "_TOP_LEFT"] })
+		new_tab:set_title(split_tabs[i].name)
+		new_pane:split({ direction = "Bottom", cwd = env["WEZTERM_" .. prefix .. "_BOTTOM"] })
+		new_pane:split({ direction = "Right", cwd = env["WEZTERM_" .. prefix .. "_TOP_RIGHT"] })
+	end
+
+	-- Create Claude tabs (single pane)
+	for _, name in ipairs(claude_tabs) do
+		local new_tab = window:spawn_tab({})
 		new_tab:set_title(name)
 	end
 
-	tab:activate()
+	first_tab:activate()
 end)
 
 -- Key bindings
