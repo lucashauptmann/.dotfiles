@@ -1,63 +1,41 @@
 ## Critical Rules
 
-- In all interactions and commit messages, be extremely concise and sacrifice grammar and for the sake of concision.
-
-### 1. Plans
-
-At the end of each plan, give me a list of unresolved questions to answer, if any. Make the extremely concise. Sacrifice grammar and for the sake of concision.
-
-Make the plan multi-phase. Ideally, each phase should correspond to a new pull request.
-
-### 2. Execution
-
-When executing a multi-phase plan, if each phase correspond to a new pull request, write a title and a concise description (one or two paragraphs) for the PR. If you are instructed to combine two phases, then the description should have all the necessary information about both phases.
-
-#### 2.1. Code Organization
-
-- Many small files over few large files
-- High cohesion, low coupling
-- Organize by feature/domain, not by type
-
-#### 2.2 Code Style
-
+- Be extremely concise. Sacrifice grammar for concision.
 - No emojis in code, comments, or documentation
-- Immutability always - never mutate objects or arrays
-- No console.log in production code
-- Proper error handling with try/catch
-- Input validation with Zod or similar
+- Immutability always — never mutate objects or arrays
 
-#### 2.3 Testing
+### Plans
 
-- TDD: Write tests first
-- 80% minimum coverage
-- Unit tests for utilities
-- Integration tests for APIs
-- E2E tests for critical flows
+- Multi-phase. Each phase = one PR ideally.
+- End with unresolved questions, if any.
 
-#### 2.4 Security
+### Execution
 
-- No hardcoded secrets
-- Environment variables for sensitive data
-- Validate all user inputs
-- Parameterized queries only
-- CSRF protection enabled
+- When executing multi-phase plans, write PR title + concise description (1-2 paragraphs) per phase.
+- Many small files over few large files. High cohesion, low coupling. Organize by feature/domain.
+- TDD: write tests first. Unit for utilities, integration for APIs, E2E for critical flows.
 
-### 3. Documentation
+### Documentation
 
-- When needed, you should write documentation for both humans and agents
-- Guidelines:
-  1. Start with what the reader needs
-     - It can be narrow or broad
-     - Include only what is relevant
-       - Does the reader needs to know about that?
-  2. Write less
-     - Don't need to cover everything
-     - Only what you can commit to, so we avoid out-of-date docs
-     - Bad: "GetRowEnumerator(); - Gets the rows enumerator"
-  3. Write or think the outline first
-  4. Rubber ducking works for docs too
-     - Talk to me
-  5. Readability
-     - Make it looks less like a wall of text
-     - Use headings
-     - Use code formattings
+- Write for the reader. Include only what's relevant.
+- Write less — only what you can commit to maintaining.
+- Use headings and code formatting. Avoid walls of text.
+
+## NEVER
+
+- Publish secrets (passwords, API keys, tokens) to git/npm/docker
+- Commit `.env` files — verify `.gitignore` includes them
+
+## New Project Setup
+
+Required files: `.env`, `.env.example`, `.gitignore`, `CLAUDE.md`
+
+```
+project/
+├── src/
+├── tests/
+├── docs/
+├── .claude/
+│   └── skills/
+└── scripts/
+```

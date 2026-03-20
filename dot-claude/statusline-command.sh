@@ -5,6 +5,7 @@ cwd=$(echo "$input" | jq -r '.workspace.current_dir // .cwd')
 transcript=$(echo "$input" | jq -r '.transcript_path // empty')
 dir=$(echo "$cwd" | sed "s|$HOME|~|")
 model=$(echo "$input" | jq -r '.model.display_name')
+session_id=$(echo "$input" | jq -r '.session_id // empty')
 remaining=$(echo "$input" | jq -r '.context_window.remaining_percentage // empty')
 
 # git branch + dirty state
@@ -16,6 +17,7 @@ blue=$(printf '\033[38;5;75m')
 green=$(printf '\033[38;5;78m')
 purple=$(printf '\033[38;5;183m')
 ctx_green=$(printf '\033[38;5;114m')
+dim=$(printf '\033[2m')
 reset=$(printf '\033[0m')
 
 # detect worktree name
@@ -38,8 +40,15 @@ else
   git_info=""
 fi
 
-# Line 1: dir (blue) | branch (green) | model (purple)
-printf '%s' "📁 ${blue}${dir}${reset}${git_info}  🤖 ${purple}${model}${reset}"
+# Line 1: dir (blue) | branch (green) | model (purple) | session (dim)
+session_suffix=""
+if [ -n "$session_id" ]; then
+  short_id=$(echo "$session_id" | cut -c1-8)
+  session_suffix="  ${dim}[${short_id}]${reset}"
+  # Set WezTerm user var for dynamic tab title
+  printf '\033]1337;SetUserVar=%s=%s\007' "CLAUDE_SESSION_ID" "$(echo -n "$short_id" | base64)"
+fi
+printf '%s' "📁 ${blue}${dir}${reset}${git_info}  🤖 ${purple}${model}${reset}${session_suffix}"
 printf '\n'
 
 # Line 2: context bar

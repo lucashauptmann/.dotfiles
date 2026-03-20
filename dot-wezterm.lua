@@ -27,6 +27,7 @@ local tab_colors = {
 	Backend = "#444444",
 	Web = "#048a81",
 	["Persona/Cortex"] = "#8b5cf6",
+	Swarm = "#d4a017",
 	["Claude 1"] = "#ef3e36",
 	["Claude 2"] = "#a11692",
 	["Claude 3"] = "#246eb9",
@@ -57,11 +58,19 @@ wezterm.on("format-tab-title", function(tab)
 	end
 	local color = tab_colors[title]
 	if color then
+		local display_title = title
+		local claude_num = title:match("^Claude (%d+)$")
+		if claude_num then
+			local session_id = tab.active_pane.user_vars.CLAUDE_SESSION_ID
+			if session_id and session_id ~= "" then
+				display_title = "Claude " .. claude_num .. " [" .. session_id .. "]"
+			end
+		end
 		local bg = tab.is_active and darken(color, 0.75) or color
 		return {
 			{ Background = { Color = bg } },
 			{ Foreground = { Color = "#ffffff" } },
-			{ Text = " " .. (tab.tab_index + 1) .. ": " .. (tab.is_active and "*" or "") .. title .. " " },
+			{ Text = " " .. (tab.tab_index + 1) .. ": " .. (tab.is_active and "*" or "") .. display_title .. " " },
 		}
 	end
 end)
@@ -88,9 +97,13 @@ wezterm.on("gui-startup", function(cmd)
 		new_pane:split({ direction = "Right", cwd = env["WEZTERM_" .. prefix .. "_TOP_RIGHT"] })
 	end
 
-	-- Create Claude tabs (single pane)
+	-- Create Swarm tab
+	local swarm_tab = window:spawn_tab({ cwd = os.getenv("HOME") .. "/dev/tools/claude-swarm" })
+	swarm_tab:set_title("Swarm")
+
+	-- Create Claude tabs (single pane, open in ~/dev/masterclass)
 	for _, name in ipairs(claude_tabs) do
-		local new_tab = window:spawn_tab({})
+		local new_tab = window:spawn_tab({ cwd = os.getenv("HOME") .. "/dev/masterclass" })
 		new_tab:set_title(name)
 	end
 

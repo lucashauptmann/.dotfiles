@@ -113,3 +113,6 @@ alias ciaclean='git branch --merged origin/main | grep -vE "^\s*(\*|main|develop
 
 bindkey "^[[1;3C" forward-word
 bindkey "^[[1;3D" backward-word
+
+
+CORALOGIX_API_KEY=cxup_uYa9bJ4J0iDeM14WbvIZ0HzKeUJF7g
