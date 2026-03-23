@@ -1,0 +1,4 @@
+dot-wezterm.env
+dot-zshrc.local
+dot-claude/swarm/panes/*.json
+dot-claude/swarm/panes/*.json.tmp
