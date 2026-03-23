@@ -98,12 +98,14 @@ wezterm.on("gui-startup", function(cmd)
 	end
 
 	-- Create Swarm tab
-	local swarm_tab = window:spawn_tab({ cwd = os.getenv("HOME") .. "/dev/tools/claude-swarm" })
+	local swarm_dir = env["WEZTERM_SWARM_DIR"] or (os.getenv("HOME") .. "/dev/tools/claude-swarm")
+	local swarm_tab = window:spawn_tab({ cwd = swarm_dir })
 	swarm_tab:set_title("Swarm")
 
-	-- Create Claude tabs (single pane, open in ~/dev/masterclass)
+	-- Create Claude tabs (single pane)
+	local claude_dir = env["WEZTERM_CLAUDE_DIR"] or os.getenv("HOME")
 	for _, name in ipairs(claude_tabs) do
-		local new_tab = window:spawn_tab({ cwd = os.getenv("HOME") .. "/dev/masterclass" })
+		local new_tab = window:spawn_tab({ cwd = claude_dir })
 		new_tab:set_title(name)
 	end
 
