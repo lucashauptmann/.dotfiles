@@ -35,8 +35,7 @@ Personal dotfiles for macOS with WezTerm, Claude Code, Neovim, and AeroSpace.
 The `save-diary.sh` hook writes session summaries to a local git repo. To use it:
 
 1. Create a git repo for your diary (e.g., `~/dev/engineering-notes`)
-2. Set `DIARY_REPO` in your environment to the repo folder name (defaults to `engineering-notes`)
-3. The hook expects the repo at `~/dev/$DIARY_REPO`
+2. Set `DIARY_DIR` to the repo path (defaults to `~/dev/engineering-notes`)
 
 ## Environment variables
 
