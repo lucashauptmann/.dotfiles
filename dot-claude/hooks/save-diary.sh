@@ -4,7 +4,8 @@
 
 set -euo pipefail
 
-DIARY_DIR="${DIARY_DIR:-$HOME/dev/engineering-notes}"
+DIARY_REPO="${DIARY_REPO:-engineering-notes}"
+DIARY_DIR="$HOME/dev/$DIARY_REPO"
 MAX_CHARS="${DIARY_MAX_CHARS:-80000}"
 
 # Read hook input from stdin (must be synchronous — stdin closes when hook exits)
