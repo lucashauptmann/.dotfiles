@@ -49,4 +49,4 @@ Set these in `~/.wezterm.env` or your shell profile:
 | `WEZTERM_PERSONA_*` | — | Paths for Persona/Cortex workspace panes |
 | `WEZTERM_SWARM_DIR` | `~/dev/tools/claude-swarm` | Swarm tab working directory |
 | `WEZTERM_CLAUDE_DIR` | `~` | Claude tabs working directory |
-| `DIARY_REPO` | `engineering-notes` | Folder name for diary repo under `~/dev/` |
+| `DIARY_DIR` | `~/dev/engineering-notes` | Path to diary git repo |
